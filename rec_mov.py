@@ -1,3 +1,5 @@
+#user-based approach
+
 ratings = {'Samuel': 
 		{'Lord of the Rings trilogy': 5.0,
 		 'Parasite': 4.5, 

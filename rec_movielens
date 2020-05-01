@@ -1,3 +1,5 @@
+#user-based approach
+
 from math import sqrt
 
 def euclidian(base, user1, user2):
