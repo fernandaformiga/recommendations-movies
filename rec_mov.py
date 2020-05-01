@@ -96,3 +96,5 @@ def get_recommendations(user):
 	return rankings
 
 print(get_recommendations('Johnny'))
+
+#it is possible to invert the database and get similar movies rather than similar user tastes

@@ -1,0 +1,63 @@
+from math import sqrt
+
+def euclidian(base, user1, user2):
+	si = {}
+	for item in base[user1]: #validate common movies
+		if item in base[user2]:
+			si[item] = 1
+	
+	if len(si) == 0: #no movies in common
+		return 0
+
+	soma = sum([pow(base[user1][item] - base[user2][item],2)
+			for item in base[user1] if item in base[user2]])
+
+	return 1/(1 + sqrt(soma))
+
+
+def get_similars(base, user):
+	similarity = [(euclidian(base, user, other_user), other_user)
+				for other_user in base if other_user != user]
+	similarity.sort()
+	similarity.reverse()
+	return similarity[0:10]
+
+def get_recommendations(base, user):
+	totals = {}
+	sum_similarity = {}
+	for other in base:
+		if other == user: continue
+		#continue won't run code below if both are the same
+		similarity = euclidian(base, user, other)
+
+		if similarity <= 0: continue
+		
+		for item in base[other]:
+			if item not in base[user]:
+				totals.setdefault(item,0)
+				totals[item] += base[other][item] * similarity
+				sum_similarity.setdefault(item,0)
+				sum_similarity[item] += similarity
+	rankings = [(total/sum_similarity[item], item) for item, total in totals.items()]
+	rankings.sort()
+	rankings.reverse()
+	return rankings[0:10]
+
+
+#using movielens database for movie recommendations
+
+def load_movielens(path='D:/ml-100k'):
+    movies = {}
+    for line in open(path + '/u.item'):
+        (id,title) = line.split('|')[0:2]
+        movies[id] = title
+    base = {}
+    for line in open(path + '/u.data'):
+        (user, movieid, rating, time) = line.split('\t')
+        base.setdefault(user, {})
+        base[user][movies[movieid]] = float(rating)
+    return base
+
+base = load_movielens()
+print(get_similars(base, '212'))
+print(get_recommendations(base, '212'))
